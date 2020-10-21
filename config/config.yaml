@@ -1,0 +1,8 @@
+env:
+  go_path: /Users/fuhui/Code
+
+  # 相对的gopath的路径
+  project_path: github.com/selftool
+
+mysql:
+  self_local:

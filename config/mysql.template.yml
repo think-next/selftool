@@ -1,0 +1,9 @@
+kind: reverse
+name: mydb
+source:
+  database: mysql
+  conn_str: ''
+targets:
+  - type: codes
+    language: golang
+    output_dir: /Users/fuhui/Code/src/github.com/selftool/data/mysql_reverse_module
