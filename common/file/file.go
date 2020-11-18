@@ -68,26 +68,37 @@ func (util *UtilFile) ReadLine(path string, pipeline chan<- string) error {
 }
 
 // 通过channel来逐行读取文件
-func (util *UtilFile) WriteLine(path string, pipeline chan<- string) error {
-	fi, err := os.Open(path)
+func (util *UtilFile) WriteLineByChannel(path string, pipeline <-chan string) error {
+	fi, err := os.OpenFile(path, os.O_WRONLY|os.O_TRUNC|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		return err
 	}
 	defer fi.Close()
 
-	br := bufio.NewReader(fi)
-	for {
-		line, err := br.ReadString(LineSeparator)
-		if err == io.EOF {
-			break
-		}
+	for v := range pipeline {
+		_, err := fi.WriteString(v)
 		if err != nil {
 			return err
 		}
-
-		pipeline <- line
 	}
 
-	close(pipeline)
+	return nil
+}
+
+// 通过channel来逐行读取文件
+func (util *UtilFile) WriteLineBySlice(path string, pipeline []string) error {
+	fi, err := os.OpenFile(path, os.O_WRONLY|os.O_TRUNC|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		return err
+	}
+	defer fi.Close()
+
+	for _, v := range pipeline {
+		_, err := fi.WriteString(v)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
