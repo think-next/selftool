@@ -17,10 +17,10 @@ const (
 
 /*
 	将文件进行拆分，每行数据拆分成一个数组结构
-	chan 中的每个元素代表一行数据结构
+	chan 的元素是一个数组结构, 每个元素表示的是一个表中的字段
 	separators 维护1个元素，表示元文件的分割符号
 */
-func SplitFile(path string, pipeLine chan<- string, separators ...string) error {
+func SplitFile(path string, pipeLine chan<- []string, separators ...string) error {
 	splitSeparator := DefaultTableSplitSeparator
 	if len(separators) != 0 {
 		splitSeparator = separators[0]
@@ -42,8 +42,7 @@ func SplitFile(path string, pipeLine chan<- string, separators ...string) error 
 	}()
 
 	for line := range srcLines {
-		temp := strings.Split(line, splitSeparator)
-		pipeLine <- strings.Join(temp, DefaultTableJoinSeparator)
+		pipeLine <- strings.Split(line, splitSeparator)
 	}
 
 	close(pipeLine)
